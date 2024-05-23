@@ -1,39 +1,38 @@
+from collections import defaultdict, deque
+
 class Graph:
     def __init__(self):
-        self.graph = {}
+        self.adjacency_list = defaultdict(list)
 
     def add_edge(self, u, v):
-        if u not in self.graph:
-            self.graph[u] = []
-        self.graph[u].append(v)
-
-    def dfs_util(self, v, visited):
-        visited.add(v)
-        print(v, end=' ')
-
-        for neighbor in self.graph.get(v, []):
-            if neighbor not in visited:
-                self.dfs_util(neighbor, visited)
+        self.adjacency_list[u].append(v)
 
     def dfs(self, start):
         visited = set()
-        self.dfs_util(start, visited)
+        stack = [start]
+
+        while stack:
+            vertex = stack.pop()
+            if vertex not in visited:
+                print(vertex, end=' ')
+                visited.add(vertex)
+                stack.extend([neighbor for neighbor in self.adjacency_list[vertex] if neighbor not in visited])
 
     def bfs(self, start):
         visited = set()
-        queue = [start]
+        queue = deque([start])
 
         while queue:
-            v = queue.pop(0)
-            if v not in visited:
-                print(v, end=' ')
-                visited.add(v)
-                for neighbor in self.graph.get(v, []):
-                    if neighbor not in visited:
-                        queue.append(neighbor)
+            vertex = queue.popleft()
+            if vertex not in visited:
+                print(vertex, end=' ')
+                visited.add(vertex)
+                queue.extend([neighbor for neighbor in self.adjacency_list[vertex] if neighbor not in visited])
 
-# Task 1 Graph
+# Create graph
 graph = Graph()
+
+# Add edges
 graph.add_edge('A', 'C')
 graph.add_edge('A', 'B')
 graph.add_edge('A', 'D')
@@ -41,17 +40,12 @@ graph.add_edge('B', 'C')
 graph.add_edge('B', 'E')
 graph.add_edge('B', 'G')
 graph.add_edge('C', 'D')
-graph.add_edge('D', 'C')
-graph.add_edge('D', 'A')
 graph.add_edge('E', 'G')
 graph.add_edge('E', 'F')
-graph.add_edge('E', 'B')
 graph.add_edge('F', 'G')
-graph.add_edge('F', 'E')
-graph.add_edge('G', 'F')
-graph.add_edge('G', 'B')
 
-print("DFS traversal:")
+print("DFS:", end=' ')
 graph.dfs('A')
-print("\nBFS traversal:")
+
+print("\nBFS:", end=' ')
 graph.bfs('A')
